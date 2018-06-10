@@ -1,4 +1,4 @@
-# TF2-Mario-Bros
+# TF2 Mario Bros.
 A gamemode for Team Fortress 2 themed upon the Mario franchise.
 
 Details can be found here: https://forums.alliedmods.net/showthread.php?t=242724
