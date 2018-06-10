@@ -1,0 +1,391 @@
+"Phrases"
+{
+	"mbWelcome"
+	{
+		"en"	"{default}Welcome to Mario Bros!\nUse {orange}!mariohelp {default}for more info."
+		"es"	"{default}Bienvenido a Mario Bros!\nUsa {orange}!marioayuda{default}para más información."
+	}
+	
+	"mbHintsEnable"
+	{
+		"en"	"{default}Hintboxes Enabled."
+		"es"	"{default}Cajas de Pistas Activadas."
+	}
+	
+	"mbHintsDisable"
+	{
+		"en"	"{default}Hintboxes Disabled."
+		"es"	"{default}Cajas de Pistas Desactivadas."
+	}
+	
+	"mbMusicEnable"
+	{
+		"en"	"{default}Music Enabled."
+		"es"	"{default}Musica Activada."
+	}
+	
+	"mbMusicDisable"
+	{
+		"en"	"{default}Music Disabled."
+		"es"	"{default}Musica Desactivada."
+	}
+	
+	"mbGetPowerUp"
+	{
+		"#format"	"{1:s}"
+		"en"	"{default}Power Up! Obtained: {orange}{1}!"
+		"es"	"{default}Potenciador! Obtenido: {orange}{1}!"
+	}
+	
+	"mbGivePowerUp"
+	{
+		"#format"	"{1:s},{2:t}"
+		"en"	"{default}{1} received: {orange}{2}!{default} Say thanks!"
+		"es"	"{default}{1} recibido: {orange}{2}!{default} Di Gracias!"
+	}
+	
+	"mbLosePowerUp"
+	{
+		"#format"	"{1:s}"
+		"en"	"{default}{1} lost their Power-Up."
+		"es"	"{default}{1} ha perdido su Potenciador."
+	}
+	
+	"mbEndPowerUp"
+	{
+		"en"	"{default}Your Power-Up has ended."
+		"es"	"{default}Tu Potenciador ha terminado."
+	}
+	
+	"mbSpawnWithPowerUp"
+	{
+		"#format"	"{1:t}"
+		"en"	"{default}Starting Power Up: {orange}{1}!"
+		"es"	"{default}Comenzando con Potenciador: {orange}{1}!"
+	}
+	
+	"mbRespawnCount"
+	{
+		"#format"	"{1:i}"
+		"en"	"{default}Respawns Left: {orange}{1}"
+		"es"	"{default}Reapariciones Restantes: {orange}{1}"
+	}
+	
+	"mbLivesCount"
+	{
+		"#format"	"{1:i}"
+		"en"	"{default}You have {orange}{1} {default}Lives left!"
+		"es"	"{default}Tienes {orange}{1} {default}Vidas restantes!"
+	}
+	
+	"mbStealPowerUp"
+	{
+		"#format"	"{1:t}"
+		"en"	"{default}Stole {orange}{1}!"
+		"es"	"{default}Robaste {orange}{1}!"
+	}
+	
+	"mbStolenPowerUp"
+	{
+		"en"	"{default}Your Power-Up was stolen!"
+		"es"	"{default}Tu Potenciador ha sido robado!"
+	}
+	
+	"mbHint_FireFlower"
+	{
+		"en"	"The Fire Flower gives you a Flare Launcher\nthat deals damage with heavy knockback."
+		"es"	"La Flor de Fuego te da un Lanzador de Llamaradas\nque inflinge daño heavy knockback."
+	}
+	
+	"mbHint_POWBlock"
+	{
+		"en"	"The POW Block knocks everyone on the\nopposite team within a large radius\nairborne."
+		"es"	"El Bloque POW golpea a todos los del\nEquipo Contrario dentro de un gran radio."
+	}
+	
+	"mbHint_PWing"
+	{
+		"en"	"The P Wing increases your movement speed."
+		"es"	"Las Alas Voladoras incrementan tu velocidad de Movimiento."
+	}
+	
+	"mbHint_GoombaShoe"
+	{
+		"en"	"Goomba's Shoe makes your stomps deal\nsignificantly more damage. It also allows\nyou to jump on Bowser Suit players."
+		"es"	"Los zapatos de Goomba hacen que tus pisadas\nhagan mucho más daño."
+	}
+	
+	"mbHint_SuperLeaf"
+	{
+		"en"	"The Super Leaf allows you to jump in midair.\nYou can also hold down Jump to slow down\nyour descent."
+		"es"	"La Super Hoja te permite saltar en el aire.\nTambien, al mantener pulsado el salto\nreduce tu velocidad de caída."
+	}
+	
+	"mbHint_BooTheif"
+	{
+		"en"	"The Boo Theif steals one of your opponents'\nitems. It also cloaks you for a little while."
+		"es"	"El fantasma ladron, te permite robar un objeto'\nde tu oponente. También te oculta durante un tiempo."
+	}
+	
+	"mbHint_Mushroom"
+	{
+		"en"	"The Mushroom heals you by a good amount."
+		"es"	"La Seta te cura una buena cantidad de vida."
+	}
+	
+	"mbHint_Starman"
+	{
+		"en"	"The Starman makes you completely invincible,\nfast, AND deadly. Run into people to hurt them!"
+		"es"	"El Hombre Estrella te hace completamente invencible,\nrápido, Y MORTAL. EJECUTAS a los jugadores al hacerles daño!"
+	}
+	
+	"mbHint_Hammer"
+	{
+		"en"	"The Hammer deals extreme damage and swings\nreally fast."
+		"es"	"El Martillo hace daño extremo y oscilaciones muy rápidas."
+	}
+	
+	"mbHint_Thunderbolt"
+	{
+		"en"	"The Thunderbolt deals damage and slows down\nany enemy within range."
+		"es"	"El Rayo inflinge daño y reduce a cualquier enemigo\na cualquier distancia."
+	}
+	
+	"mbHint_GoldenMushroom"
+	{
+		"en"	"The Golden Mushroom gives 3 times that of a\nnormal Mushroom."
+		"es"	"La Seta de Oro, te cura 3 veces\ncomo una seta normal."
+	}
+	
+	"mbHint_IceFlower"
+	{
+		"en"	"The Ice Flower gives you a fast Flare Launcher\nthat freezes your enemies, slowing them down."
+		"es"	"La Flor de Hielo te da un Lanzador de Bengalas\nque congela a tus enemigos, haciendolos más lentos."
+	}
+	
+	"mbHint_LazyShellArmor"
+	{
+		"en"	"Lazy Shell Armor protects you from damage and\nstatus ailments."
+		"es"	"La Armadura de Caparazón Perezoso te protege\nde todo el daño y estados (Fuego, Hielo)."
+	}
+	
+	"mbHint_1UpMushroom"
+	{
+		"en"	"The 1-Up Mushroom gives you an extra life. You\ncan carry up to 3."
+		"es"	"Las 1-Up Setas, te dan una vida extra.\nSolo puedes llevar un máximo de 3."
+	}
+	
+	"mbHint_BowserSuit"
+	{
+		"en"	"The Bowser Suit gives you loads of health, a\nFire Flower, AND enemies can't touch you.\nHowever, it slows you down."
+		"es"	"El Traje de Bowser te da mucha Salud, \nUna Flor de Fuego, Y los enemigos no pueden tocarte.\nSin embargo, te ralentiza."
+	}
+	
+	"mbHint_Jumping"
+	{
+		"en"	"You can jump very high. Hold down\nthe Jump key to jump higher."
+		"es"	"Puedes saltar muy Alto.\nMantenga la Tecla de Salto para saltar más alto."
+	}
+	
+	"mbHint_Stomping"
+	{
+		"en"	"Try to land on your enemies' heads.\nStomping on them does damage and\nbounces you back into the air."
+		"es"	"Trate de aterrizar sobre las cabezas de los enemigos.\nPisando fuerte sobre ellos le hara mucho daño\ny rebotará en el aire."
+	}
+	
+	"mbHint_Sprinting"
+	{
+		"en"	"Bind +sprint to a key, then press it to Sprint!\nStrafing or backpedaling will\ncancel sprinting, so be careful."
+		"es"	"Enlace +sprint a una tecla, ¡luego presiónala para Sprint!\nDisparar o La marcha atras\npuede cancelarlo, tenga cuidado."
+	}
+	
+	"mbHint_WeighDown"
+	{
+		"en"	"Press the Crouch key while falling to\nweigh yourself down and fall faster."
+		"es"	"Presione la tecla de AGACHARSE mientras cae\npara hacer más peso y caer más rapido."
+	}
+	
+	"mbHint_UsingPowerUps"
+	{
+		"en"	"Press the Secondary Attack key to use\nyour currently held Power-Up. You can't\nhold more than 1, so make good use of it."
+		"es"	"Pulse la tecla secundaria de Ataque para usar\nsu POTENCIADOR ACTUAL.\nNo puede llevar más de 1, así que haga buen uso de él."
+	}
+	
+	"mbHint_BattleArena"
+	{
+		"en"	"Battle Arena is a special gamemode where\neach player can only respawn so many times.\nOnce you lose all your respawns, you're\nsent to Spectator. The team with the\nmost respawns left wins.\n"
+		"es"	"Arena de Batalla es un modo especial de Juego en el que\ncada jugador puede reaparecer una cantidad de veces.\nCuando pierda todas sus reapariciones,\nserá enviado a Espectador.\nEl Equipo con más cantidad de reapariciones, gana.\n"
+	}
+	
+	"mbHint_CoinRush"
+	{
+		"en"	"Coin Rush is a special gamemode where\nyou collect and hold onto coins to count\ndown a timer. The more coins you have, the\nsafer you are. If your team has triple the\nother team's coins, your timer counts down\nfaster. The first to get to 0 seconds wins."
+		"es"	"Recolección de Monedas es un modo especial de Juegoen el que\ntu coleccionas monedas durante un tiempo.\nCuantas más monedas tienes, más seguro estás.\nSi tu equipo tiene el triple de monedas que el otro equipo,\nEl tiempo de vuestro equipo corre más rápido.\nEl primero en terminar el tiempo, GANA."
+	}
+	"Fire Flower"
+	{
+		"en"	"Fire Flower"
+		"es"	"Flor de Fuego"
+	}
+	"POW Block"
+	{
+		"en"	"POW Block"
+		"es"	"Bloque de Energia"
+	}
+	"P Wing"
+	{
+		"en"	"P Wing"
+		"es"	"Alas Voladoras"
+	}
+	"Goomba's Shoe"
+	{
+		"en"	"Goomba's Shoe"
+		"es"	"Zapato de Goomba"
+	}
+	"Super Leaf"
+	{
+		"en"	"Super Leaf"
+		"es"	"Super Hoja"
+	}
+	"Boo Thief"
+	{
+		"en"	"Boo Thief"
+		"es"	"Fantasma Ladron"
+	}
+	"Mushroom"
+	{
+		"en"	"Mushroom"
+		"es"	"Seta"
+	}
+	"Starman"
+	{
+		"en"	"Starman"
+		"es"	"Hombre Estrella"
+	}
+	"Hammer"
+	{
+		"en"	"Hammer"
+		"es"	"Martillo"
+	}
+	"Thunderbolt"
+	{
+		"en"	"Thunderbolt"
+		"es"	"Rayo"
+	}
+	"Golden Mushroom"
+	{
+		"en"	"Golden Mushroom"
+		"es"	"Seta de Oro"
+	}
+	"Ice Flower"
+	{
+		"en"	"Ice Flower"
+		"es"	"Flor de Hielo"
+	}
+	"Lazy Shell Armor"
+	{
+		"en"	"Lazy Shell Armor"
+		"es"	"Armadura Caparazón Perezoso"
+	}
+	"1-Up Mushroom"
+	{
+		"en"	"1-Up Mushroom"
+		"es"	"1-Up Setas"
+	}
+	"Bowser Suit"
+	{
+		"en"	"Bowser Suit"
+		"es"	"Traje de Bowser"
+	}
+	"Lives_HUD"
+	{
+		"#format"	"{1:i}"
+		"en"	"Lives: {1}"
+		"es"	"Vidas: {1}"
+	}
+	"Lives_Respawn_HUD"
+	{
+		"#format"	"{1:i},{2:i}"
+		"en"	"Lives: {1} - Respawns: {2}"
+		"es"	"Vidas: {1} - Reapariciones: {2}"
+	}
+	"TimeLeft_HUD"
+	{
+		"#format"	"{1:i},{2:s}"
+		"en"	"Time Left: {1}:{2}"
+		"es"	"Tiempo Restante: {1}:{2}"
+	}
+	"Lives_HUD"
+	{
+		"#format"	"{1:i}"
+		"en"	"Lives: {1}"
+		"es"	"Vidas: {1}"
+	}
+	"RED_and_BLU_Coins_HUD"
+	{
+		"#format"	"{1:i},{2:i},{3:s},{4:i},{5:i},{6:s}"
+		"en"	"RED: {1} Coins, {2}:{3} - BLU: {4} Coins, {5}:{6}"
+		"es"	"ROJO: {1} Monedas, {2}:{3} - AZUL: {4} Monedas, {5}:{6}"
+	}
+	"Power_Up_HUD_List"
+	{
+		"#format"	"{1:t}"
+		"en"	"Power Up: {1}"
+		"es"	"Potenciador: {1}"
+	}
+	"Power_Up_None_HUD"
+	{
+		"en"	"Power Up: None"
+		"es"	"Potenciador: Ninguno"
+	}
+	"Which game mode should be next?"
+	{
+		"en"	"Which game mode should be next?"
+		"es"	"Que modo de juego será el siguiente?"
+	}
+	"Map's game mode"
+	{
+		"en"	"Map's game mode"
+		"es"	"Modo de Juego del Mapa"
+	}
+	"Battle Arena"
+	{
+		"en"	"Battle Arena"
+		"es"	"Arena de Batalla"
+	}
+	"Coin Rush"
+	{
+		"en"	"Coin Rush"
+		"es"	"Recolección de Monedas"
+	}
+	"Jumping"
+	{
+		"en"	"Jumping"
+		"es"	"Saltar"
+	}
+	"Stomping"
+	{
+		"en"	"Stomping"
+		"es"	"Aplastar Jugadores"
+	}
+	"Sprinting"
+	{
+		"en"	"Sprinting"
+		"es"	"Esprintar"
+	}
+	"Weigh Down"
+	{
+		"en"	"Weigh Down"
+		"es"	"SobreCargar"
+	}
+	"Using Power-Ups"
+	{
+		"en"	"Using Power-Ups"
+		"es"	"Uso de Potenciadores"
+	}
+	"Mario Bros. Help"
+	{
+		"en"	"Mario Bros. Help"
+		"es"	"Ayuda de Mario Bros."
+	}
+}

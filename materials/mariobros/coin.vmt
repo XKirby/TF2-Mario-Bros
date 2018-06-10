@@ -1,0 +1,8 @@
+"Sprite"
+{
+	"$spriteorigin" "[ 0.50 0.50 ]"
+	"$baseTexture" "mariobros/coin.vtf"
+	"$translucent" "1"
+	"$spriteorientation" "vp_parallel"
+	"$ignorez" "1"
+}

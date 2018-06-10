@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "mariobros/goldCoin"
+	"$bumpmap" "mariobros/goldCoin_norm"
+	"$surfaceprop" "metal"
+
+	"$phong" "1"
+	"$phongexponent" 10
+	"$phongboost" "15"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.6 .6 .6]"
+}

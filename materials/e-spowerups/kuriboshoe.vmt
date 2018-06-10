@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "E-SPowerups/KuriboShoe"
+	"$bumpmap" "E-SPowerups/flatphong"
+	"$surfaceprop" "metal"
+
+	"$phong" "1"
+	"$phongexponent" 10
+	"$phongboost" "8"
+	"$phongfresnelranges"	"[0.05 0.5 1]"
+}
