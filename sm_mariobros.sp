@@ -7,6 +7,7 @@
 #include <tf2>
 #include <tf2items>
 #include <tf2items_giveweapon>
+#include <tf2attributes>
 #include <sdkhooks>
 
 #undef REQUIRE_EXTENSIONS
@@ -55,6 +56,7 @@ new Handle:mb_PowerTime;
 new Handle:mb_PowBlockDamage;
 new Handle:mb_SpeedBoostBonus;
 new Handle:mb_LeafFall;
+new Handle:mb_MaximumHP;
 new Handle:mb_MushroomHP;
 new Handle:mb_StarmanSpeed;
 new Handle:mb_LightningDamage;
@@ -74,6 +76,7 @@ new Handle:mb_RoundLimit;
 new Handle:mb_RoundWait;
 new Handle:mb_ArenaTimeLimit;
 new Handle:mb_SpawnProtection;
+new Handle:mb_CoinSpawnTimer;
 new Handle:mb_HUDLogo;
 new Handle:mb_HUD_X;
 new Handle:mb_HUD_Y;
@@ -82,6 +85,7 @@ new Handle:mb_HUDLogo_Grn;
 new Handle:mb_HUDLogo_Blu;
 new Handle:PowerUpShuffler = INVALID_HANDLE;
 new Handle:HelpMenu = INVALID_HANDLE;
+new Handle:kv = INVALID_HANDLE;
 
 // Variables
 new i_RoundCount = 0;
@@ -146,6 +150,7 @@ public OnPluginStart()
 	mb_SpeedBoostBonus = CreateConVar("sm_mb_speedboostpwing", "1.5", "Multiplies your speed by this number.");
 	mb_PowerTime = CreateConVar("sm_mb_poweruptimer", "10.0", "Sets the amount of time until your Power Up ends.");
 	mb_LeafFall = CreateConVar("sm_mb_leaffallspeed", "-120.0", "Sets the terminal velocity while using the Tanooki Leaf.");
+	mb_MaximumHP = CreateConVar("sm_mb_maxhealth", "300", "Sets the amount of maximum health you start with.");
 	mb_MushroomHP = CreateConVar("sm_mb_mushroomhealth", "300.0", "Sets the amount of health a Mushroom gives you.");
 	mb_StarmanSpeed = CreateConVar("sm_mb_speedbooststar", "1.5", "Sets the speed boost you get from a Starman.");
 	mb_LightningDamage = CreateConVar("sm_mb_thunderboltdamage", "0.25", "Sets the percentage of damage that Lightning deals.");
@@ -156,6 +161,7 @@ public OnPluginStart()
 	mb_MoveSpeed = CreateConVar("sm_mb_movespeed", "280.0", "How fast you can move normally.");
 	mb_GameMode = CreateConVar("sm_mb_gamemode", "0", "Special Game Mode Setting. <0 = None, 1 = Team Battle Arena, 2 = Team Coin Rush>");
 	mb_CoinTimeLimit = CreateConVar("sm_mb_coinrushtime", "180", "How much time in seconds you have to collect coins during Coin Rush.");
+	mb_CoinSpawnTimer = CreateConVar("sm_mb_coinrushspawntime", "10", "How much time in seconds you have before coins respawn naturally.");
 	mb_ArenaTimeLimit = CreateConVar("sm_mb_arenatime", "900", "How much time in seconds you have until the round ends.");
 	//mb_CoinLimitGlow = CreateConVar("sm_mb_coinrushglow", "10", "How many coins you're carrying before you start to glow.");
 	mb_RoundLimit = CreateConVar("sm_mb_roundlimit", "3", "How many rounds can pass before a Game Mode vote occurs.");
@@ -172,10 +178,8 @@ public OnPluginStart()
 	RegAdminCmd("sm_mb_setpowerup", Command_SetPower, ADMFLAG_CHEATS, "Gives a player a specific power-up. Usage: sm_mb_setpowerup <client> <0-15>");
 	//RegAdminCmd("sm_mb_addpowerspawn", Command_AddSpawn, ADMFLAG_ROOT, "Creates a Power-Up Spawnpoint. FOR TESTING PURPOSES ONLY.");
 	//RegAdminCmd("sm_mb_spawnpowerups", Command_SpawnPowerUps, ADMFLAG_ROOT, "Creates a Power-Up at every Power-Up Spawnpoint. FOR TESTING PURPOSES ONLY.");
-	//RegAdminCmd("sm_mb_addcoinspawn", Command_AddCoin, ADMFLAG_ROOT, "Creates a Coin Spawnpoint. FOR TESTING PURPOSES ONLY.");
 	//RegAdminCmd("sm_disableammo", Command_AmmoGone, ADMFLAG_ROOT, "Disables ALL Ammo Packs. FOR TESTING PURPOSES ONLY.");
 	RegConsoleCmd("sm_mb_powerhints", Command_ToggleHints, "Toggles Power-Up Hintboxes appearing on your HUD.");
-	//RegConsoleCmd("sm_mb_playmusic", Command_PlayMusic, "Toggles Music.");
 	RegConsoleCmd("sm_mariohelp", Command_MarioHelp, "Gives you a Help Menu for the gamemode mechanics.");
 	RegConsoleCmd("sm_marioayuda", Command_MarioHelp, "Te da un Menu de Ayuda sobre las mecánicas del Gamemode.");
 	RegConsoleCmd("+sprint", Command_StartSprint, "Allows you to sprint forward.");
@@ -186,22 +190,24 @@ public OnPluginStart()
 	HookEvent("teamplay_waiting_ends", Event_RoundStart);
 	HookEvent("teamplay_round_win", Event_RoundWin);
 	HookEvent("player_spawn", Event_PlayerSpawn);
+	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
 	HookEvent("player_death", Event_PlayerDeath);
 	HookEvent("post_inventory_application", Event_PlayerLocker);
+	HookEvent("post_inventory_application", Event_PlayerLocker, EventHookMode_Post);
 	HookEvent("player_death", Event_BeforePlayerDeath, EventHookMode_Pre);
 	HookConVarChange(mb_GameMode, OnGameModeChange);
 	
 	// Custom Weapons
 	// >> Fire Flower
-	TF2Items_CreateWeapon(50000, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350", 50, "", true);
+	TF2Items_CreateWeapon(50000, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350 ; 49 ; -1.0", 50, "", true);
 	// >> Weak Shovel
-	TF2Items_CreateWeapon(50001, "tf_weapon_shovel", 6, 2, 6, 1, "1 ; 0.2 ; 5 ; 1.25", 0, "", true);
+	TF2Items_CreateWeapon(50001, "tf_weapon_shovel", 6, 2, 6, 1, "1 ; 0.2 ; 5 ; 1.25 ; 49 ; -1.0", 0, "", true);
 	// >> Hammer
-	TF2Items_CreateWeapon(50002, "tf_weapon_shovel", 153, 2, 6, 100, "2 ; 100 ; 6 ; 0.5", 0, "", true);
+	TF2Items_CreateWeapon(50002, "tf_weapon_shovel", 153, 2, 6, 100, "2 ; 100 ; 6 ; 0.5 ; 49 ; -1.0", 0, "", true);
 	// >> Ice Flower
-	TF2Items_CreateWeapon(50003, "tf_weapon_rocketlauncher", 658, 0, 6, 50, "1 ; 0.25 ; 6 ; 0.8 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ", 50, "", true);
+	TF2Items_CreateWeapon(50003, "tf_weapon_rocketlauncher", 658, 0, 6, 50, "1 ; 0.25 ; 6 ; 0.8 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 49 ; -1.0", 50, "", true);
 	// >> Bowser's Fire Flower
-	TF2Items_CreateWeapon(50004, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350 ; 134 ; 2", 50, "", true);
+	TF2Items_CreateWeapon(50004, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350 ; 134 ; 2 ; 49 ; -1.0", 50, "", true);
 	
 	LoadTranslations("sm_mariobros.phrases.txt");
 	
@@ -281,6 +287,7 @@ public OnMapStart()
 {
 	// Precache
 	PrecacheAll();
+	LoadItemSpawnPoints();
 
 	// Extra Commands
 	ServerCommand("sv_hudhint_sound 0");
@@ -361,7 +368,7 @@ public OnClientDisconnect(client)
 				Format(path, sizeof(path), "models/%s.mdl", MODEL_COIN);
 				SetEntityModel(entity, path);
 				SetEntityMoveType(entity, MOVETYPE_VPHYSICS);
-				SetEntProp(entity, Prop_Data, "m_CollisionGroup", 1);
+				SetEntProp(entity, Prop_Data, "m_CollisionGroup", 6);
 				SetEntProp(entity, Prop_Data, "m_usSolidFlags", 16);
 				DispatchSpawn(entity);
 				TeleportEntity(entity, pos, ang, vel);
@@ -500,7 +507,7 @@ public Action:Command_SetPower(client, args)
 // Adds a Power-Up Spawn Point
 public Action:Command_AddSpawn(client, args)
 {
-	new Float:pos[3], ent, String:Power[4] = "x";
+	new Float:pos[3], en, String:Power[4] = "x";
 	if(args >= 1)
 	{
 		GetCmdArg(1, Power, sizeof(Power));
@@ -512,15 +519,15 @@ public Action:Command_AddSpawn(client, args)
 	
 	GetClientAbsOrigin(client, pos);
 	
-	ent = CreateEntityByName("info_target");
-	if(ent != -1)
+	en = CreateEntityByName("info_target");
+	if(en != -1)
 	{
 		new String:entname[32];
 		Format(entname, sizeof(entname), "mb_powerspawn %s", Power);
-		SetEntPropVector(ent, Prop_Data, "m_vecOrigin", pos);
-		DispatchKeyValue(ent, "targetname", entname);
-		TeleportEntity(ent, pos, NULL_VECTOR, NULL_VECTOR);
-		DispatchSpawn(ent);
+		SetEntPropVector(en, Prop_Data, "m_vecOrigin", pos);
+		DispatchKeyValue(en, "targetname", entname);
+		TeleportEntity(en, pos, NULL_VECTOR, NULL_VECTOR);
+		DispatchSpawn(en);
 		PrintToConsole(client, "Entity Created Successfully.");
 	}
 	
@@ -530,44 +537,84 @@ public Action:Command_AddSpawn(client, args)
 // Spawns Power-Ups at all Spawn Points
 public Action:Command_SpawnPowerUps(client, args)
 {
+	LoadItemSpawnPoints();
 	SpawnFixedPowerUps();
 	return Plugin_Handled;
 }
 
 // Adds a Coin Spawn Point
-public Action:Command_AddCoin(client, args)
+public AddCoinSpawn(Float:pos[3])
 {
-	new Float:pos[3], ent;
-	GetClientAbsOrigin(client, pos);
-	
-	ent = CreateEntityByName("info_target");
-	if(ent != -1)
+	new en;
+	en = CreateEntityByName("info_target");
+	if(en != -1)
 	{
-		SetEntPropVector(ent, Prop_Data, "m_vecOrigin", pos);
-		DispatchKeyValue(ent, "max_health", "1");
-		DispatchKeyValue(ent, "targetname", "mb_coinspawn");
-		TeleportEntity(ent, pos, NULL_VECTOR, NULL_VECTOR);
-		DispatchSpawn(ent);
-		PrintToConsole(client, "Entity Created Successfully.");
+		SetEntPropVector(en, Prop_Data, "m_vecOrigin", pos);
+		DispatchKeyValue(en, "targetname", "mb_coinspawn");
+		TeleportEntity(en, pos, NULL_VECTOR, NULL_VECTOR);
+		DispatchSpawn(en);
+	}
+}
+
+// Adds a Power-Up Spawn Point
+public AddItemSpawn(Float:pos[3], ID, RarityLevel)
+{
+	new en;
+	en = CreateEntityByName("info_target");
+	if(en != -1)
+	{
+		SetEntPropVector(en, Prop_Data, "m_vecOrigin", pos);
+		new String:ItemName[64];
+		Format(ItemName, sizeof(ItemName), "mb_itemspawn %i %i", ID, RarityLevel);
+		DispatchKeyValue(en, "targetname", ItemName);
+		TeleportEntity(en, pos, NULL_VECTOR, NULL_VECTOR);
+		DispatchSpawn(en);
+	}
+}
+
+// Adds a Power-Up to the World
+public AddItem(Float:pos[3], ID, RarityLevel)
+{
+	new en;
+	switch(RarityLevel)
+	{
+		case 0: en = CreateEntityByName("item_ammopack_small");
+		case 1: en = CreateEntityByName("item_ammopack_medium");
+		case 2: en = CreateEntityByName("item_ammopack_full");
 	}
 	
-	return Plugin_Handled;
+	if(en != -1)
+	{
+		SetEntProp(en, Prop_Send, "m_nSolidType", 6);
+		SetEntProp(en, Prop_Send, "m_usSolidFlags", 152);
+		SetEntProp(en, Prop_Send, "m_triggerBloat", 24);
+		SetEntProp(en, Prop_Send, "m_CollisionGroup", 6);
+		//SetEntPropVector(en, Prop_Data, "m_vecOrigin", pos);
+		if(ID > 0 && ID <= 15)
+		{
+			new String:ItemName[48];
+			Format(ItemName, sizeof(ItemName), "mb_powerup %i", ID);
+			DispatchKeyValue(en, "targetname", ItemName);
+		}
+		TeleportEntity(en, pos, NULL_VECTOR, NULL_VECTOR);
+		DispatchSpawn(en);
+	}
 }
 
 public Action:Command_AmmoGone(client, args)
 {
-	new ent = -1;
-	while((ent = FindEntityByClassname(ent, "item_ammopack_full")) != -1)
+	new en = -1;
+	while((en = FindEntityByClassname(en, "item_ammopack_full")) != -1)
 	{
-		AcceptEntityInput(ent, "Disable");
+		AcceptEntityInput(en, "Disable");
 	}
-	while((ent = FindEntityByClassname(ent, "item_ammopack_medium")) != -1)
+	while((en = FindEntityByClassname(en, "item_ammopack_medium")) != -1)
 	{
-		AcceptEntityInput(ent, "Disable");
+		AcceptEntityInput(en, "Disable");
 	}
-	while((ent = FindEntityByClassname(ent, "item_ammopack_small")) != -1)
+	while((en = FindEntityByClassname(en, "item_ammopack_small")) != -1)
 	{
-		AcceptEntityInput(ent, "Disable");
+		AcceptEntityInput(en, "Disable");
 	}
 	return Plugin_Handled;
 }
@@ -957,6 +1004,7 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 			new String:username[64];
 			GetClientName(client, username, sizeof(username));
 			PrintHintTextToAll("%s used %s!", username, powername);
+			
 			if(i_Hints[client])
 			{
 				DrawPanelText(panel, Hint);
@@ -1111,8 +1159,31 @@ public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 			// Remove All Weapons
 			TF2_RemoveAllWeapons(client);
 			
+			new ent;
+			ent = MaxClients+1;
+			while((ent = FindEntityByClassname(ent, "tf_wearable")) != -1)
+			{
+				new idx;
+				idx = GetEntProp(ent, Prop_Send, "m_iItemDefinitionIndex");
+				if(idx == 405 || idx == 608 || idx == 133 || idx == 444 || idx == 57 || idx == 231 || idx == 642)
+				{
+					AcceptEntityInput(ent, "Kill");
+				}
+			}
+			
+			while((ent = FindEntityByClassname(ent, "tf_wearable_demoshield")) != -1)
+			{
+				AcceptEntityInput(ent, "Kill");
+			}
+			
 			// Gives you a really weak Shovel.
 			TF2Items_GiveWeapon(client, 50001);
+			
+			// Fixes HP
+			//SetEntProp(client, Prop_Data, "m_iMaxHealth", GetConVarInt(mb_MaximumHP));
+			//SetEntProp(client, Prop_Data, "m_iHealth", GetConVarInt(mb_MaximumHP));
+			TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - 200.0);
+			CreateTimer(0.1, t_FixMaxHP, any:client);
 			
 			// Recolor the player correctly
 			SetEntityRenderColor(client, 255, 255, 255, 255);
@@ -1219,7 +1290,7 @@ public Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)
 						Format(path, sizeof(path), "models/%s.mdl", MODEL_COIN);
 						SetEntityModel(entity, path);
 						SetEntityMoveType(entity, MOVETYPE_VPHYSICS);
-						SetEntProp(entity, Prop_Data, "m_CollisionGroup", 1);
+						SetEntProp(entity, Prop_Data, "m_CollisionGroup", 6);
 						SetEntProp(entity, Prop_Data, "m_usSolidFlags", 16);
 						DispatchSpawn(entity);
 						TeleportEntity(entity, pos, ang, vel);
@@ -1339,8 +1410,31 @@ public Event_PlayerLocker(Handle:event, const String:name[], bool:dontBroadcast)
 		// Remove All Weapons
 		TF2_RemoveAllWeapons(client);
 		
+		new ent;
+		ent = MaxClients+1;
+		while((ent = FindEntityByClassname(ent, "tf_wearable")) != -1)
+		{
+			new idx;
+			idx = GetEntProp(ent, Prop_Send, "m_iItemDefinitionIndex");
+			if(idx == 405 || idx == 608 || idx == 133 || idx == 444 || idx == 57 || idx == 231 || idx == 642)
+			{
+				AcceptEntityInput(ent, "Kill");
+			}
+		}
+		
+		while((ent = FindEntityByClassname(ent, "tf_wearable_demoshield")) != -1)
+		{
+			AcceptEntityInput(ent, "Kill");
+		}
+		
 		// Gives you a really weak Shovel.
 		TF2Items_GiveWeapon(client, 50001);
+		
+		// Fixes HP
+		//SetEntProp(client, Prop_Data, "m_iMaxHealth", GetConVarInt(mb_MaximumHP));
+		//SetEntProp(client, Prop_Data, "m_iHealth", GetConVarInt(mb_MaximumHP));
+		TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - 200.0);
+		CreateTimer(0.1, t_FixMaxHP, any:client);
 		
 		// Recolor the player correctly
 		SetEntityRenderColor(client, 255, 255, 255, 255);
@@ -1610,6 +1704,8 @@ public OnGameFrame()
 	else if(TotalCoins[0] != TotalCoins[1])
 	{
 		if(RoundWaitTime <= 0 && Time[0] > 0 && Time[1] > 0){FrameCount++;}
+		
+		/* Double-Countdown Speed mechanic, removed because it's unnecessary.
 		if(FrameCount % SECOND >= (SECOND / 2))
 		{
 			if(TotalCoins[0] >= TotalCoins[1]*3)
@@ -1623,6 +1719,8 @@ public OnGameFrame()
 				Time[1]--;
 			}
 		}
+		*/
+		
 		if(FrameCount >= SECOND)
 		{
 			FrameCount = 0;
@@ -1654,7 +1752,11 @@ public Action:t_EndPowerUp(Handle:timer, any:client)
 			}
 			case 3, 6, 8: {SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", GetConVarFloat(mb_MoveSpeed));}
 			case 5: {Floating[client] = false;}
-			case 9: {TF2Items_GiveWeapon(client, 50001);}
+			case 9:
+			{
+				TF2_RemoveWeaponSlot(client, 0);
+				TF2Items_GiveWeapon(client, 50001);
+			}
 			case 12:
 			{
 				TF2_RemoveWeaponSlot(client, 0);
@@ -1664,7 +1766,6 @@ public Action:t_EndPowerUp(Handle:timer, any:client)
 			{
 				TF2_RemoveWeaponSlot(client, 0);
 				TF2Items_GiveWeapon(client, 50001);
-				SetEntityHealth(client, 200);
 			}
 		}
 		i_UsingPower[client] = 0;
@@ -1702,6 +1803,17 @@ public Action:t_ForceDefaultSpeed(Handle:timer, any:client)
 	if(IsClientInGame(client) && IsPlayerAlive(client))
 	{
 		SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", GetConVarFloat(mb_MoveSpeed));
+	}
+}
+
+// Fix the player's Maximum HP
+public Action:t_FixMaxHP(Handle:timer, any:client)
+{
+	if(IsClientInGame(client) && IsPlayerAlive(client))
+	{
+		//SetEntProp(client, Prop_Data, "m_iMaxHealth", GetConVarInt(mb_MaximumHP));
+		//SetEntProp(client, Prop_Data, "m_iHealth", GetConVarInt(mb_MaximumHP));
+		TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - 200.0);
 	}
 }
 
@@ -2256,6 +2368,7 @@ public OnEntityCreated(entity, const String:classname[])
 // Spawn Fixed Power-Ups
 public SpawnFixedPowerUps()
 {
+
 	new index = -1, String:EntName[64], String:PowerName[64], Float:pos[3], String:ns[16], i, String:path[255];
 	while((index = FindEntityByClassname(index, "info_target")) != -1)
 	{
@@ -2313,6 +2426,16 @@ public SpawnFixedPowerUps()
 				SetEntPropVector(entity, Prop_Data, "m_vecOrigin", pos);
 			}
 		}
+		
+		if(StrContains(EntName, "mb_itemspawn", false) > -1)
+		{
+			new ID, Size, String:Sections[3][24];
+			ExplodeString(EntName, " ", Sections, 3, 24, false);
+			GetEntPropVector(index, Prop_Data, "m_vecOrigin", pos);
+			ID = StringToInt(Sections[1]);
+			Size = StringToInt(Sections[2]);
+			AddItem(pos, ID, Size);
+		}
 	}
 	
 	// Find Normal Ammopacks
@@ -2369,6 +2492,20 @@ public bool:FixedPowerUpCheck(entity, other)
 		{
 			TotalCoins[GetClientTeam(entity)-2] += GetEntProp(other, Prop_Data, "m_iMaxHealth");
 			EmitSoundToAll(SOUND_COIN, entity);
+			new index = -1, String:SpawnName[64], Float:SpawnPos[3], Float:CoinPos[3];
+			while((index = FindEntityByClassname(index, "info_target")) != -1)
+			{
+				GetEntPropString(index, Prop_Data, "m_iName", SpawnName, sizeof(SpawnName));
+				GetEntPropVector(index, Prop_Data, "m_vecOrigin", SpawnPos);
+				GetEntPropVector(other, Prop_Data, "m_vecOrigin", CoinPos);
+				if(StrContains(SpawnName, "mb_coinspawn", false) > -1 && GetConVarInt(mb_GameMode) == 2 &&
+					(SpawnPos[0] == CoinPos[0] && SpawnPos[1] == CoinPos[1] && SpawnPos[2] == CoinPos[2])
+				)
+				{
+					CreateTimer(GetConVarFloat(mb_CoinSpawnTimer), t_MakeCoin2, index);
+					break;
+				}
+			}
 			AcceptEntityInput(other, "Kill");
 			return true;
 		}
@@ -2540,6 +2677,82 @@ public Action:t_MakeCoin(Handle:timer, any:entity)
 	}
 }
 
+// Make Coin Timer
+public Action:t_MakeCoin2(Handle:timer, any:entity)
+{
+	if(IsValidEntity(entity))
+	{
+		new e, Float:pos[3], String:value[16], String:path[128];
+		e = CreateEntityByName("item_ammopack_small");
+		if(e != -1)
+		{
+			GetEntPropVector(entity, Prop_Data, "m_vecOrigin", pos);
+			Format(path, sizeof(path), "models/%s.mdl", MODEL_COIN);
+			DispatchKeyValue(e, "powerup_model", path);
+			DispatchKeyValue(e, "targetname", "mb_coin");
+			IntToString(1, value, sizeof(value));
+			DispatchKeyValue(e, "max_health", value);
+			DispatchSpawn(e);
+			TeleportEntity(e, pos, NULL_VECTOR, NULL_VECTOR);
+			SetEntPropVector(e, Prop_Data, "m_vecOrigin", pos);
+		}
+	}
+}
+
+// Load Coin Rush Coin Spawn Points
+public LoadItemSpawnPoints()
+{
+	if(kv != INVALID_HANDLE)
+	{
+		CloseHandle(kv);
+		kv = INVALID_HANDLE;
+	}
+	kv = CreateKeyValues("ItemSpawns");
+	
+	new String:path[512];
+	BuildPath(Path_SM, path, sizeof(path), "configs/mariobros_itemspawns.txt");
+	if(FileToKeyValues(kv, path))
+	{
+		new String:MapName[256], String:CurrentMap[256], Float:NewPos[3], String:Type[16];
+		KvGotoFirstSubKey(kv);
+		do
+		{
+			KvGetSectionName(kv, MapName, sizeof(MapName));
+			GetCurrentMap(CurrentMap, sizeof(CurrentMap));
+			
+			if(StrEqual(CurrentMap, MapName))
+			{
+				new String:item_name[64];
+				KvGotoFirstSubKey(kv);
+				do
+				{
+					KvGetSectionName(kv, item_name, sizeof(item_name));
+					KvGetString(kv, "type", Type, sizeof(Type), "coin");
+					NewPos[0] = KvGetFloat(kv, "x", -9999.0);
+					NewPos[1] = KvGetFloat(kv, "y", -9999.0);
+					NewPos[2] = KvGetFloat(kv, "z", -9999.0);
+					if(StrEqual(Type, "coin"))
+					{
+						AddCoinSpawn(NewPos);
+					}
+					else if(StrEqual(Type, "item"))
+					{
+						new ID, Size;
+						ID = KvGetNum(kv, "id", 0);
+						Size = KvGetNum(kv, "rarity", 0);
+						AddItemSpawn(NewPos, ID, Size);
+					}
+				}
+				while (KvGotoNextKey(kv));
+			}
+			
+			KvGoBack(kv);
+		
+		}		
+		while (KvGotoNextKey(kv));
+	}
+}
+
 stock SpawnCoinProps(client, String:model[], skin=0, num=1, Float:offsz = 30.0)
 {
 	decl Float:pos[3], Float:vel[3], Float:ang[3];
@@ -2552,7 +2765,7 @@ stock SpawnCoinProps(client, String:model[], skin=0, num=1, Float:offsz = 30.0)
 	{
 		vel[0] = GetRandomFloat(-300.0, 300.0);
 		vel[1] = GetRandomFloat(-300.0, 300.0);
-		vel[2] = GetRandomFloat(300.0, 300.0);
+		vel[2] = 300.0;
 		pos[0] += GetRandomFloat(-5.0, 5.0);
 		pos[1] += GetRandomFloat(-5.0, 5.0);
 		new ent = CreateEntityByName("prop_physics_override");
@@ -2562,13 +2775,13 @@ stock SpawnCoinProps(client, String:model[], skin=0, num=1, Float:offsz = 30.0)
 		SetEntProp(ent, Prop_Send, "m_nSolidType", 6);
 		SetEntProp(ent, Prop_Send, "m_usSolidFlags", 152);
 		SetEntProp(ent, Prop_Send, "m_triggerBloat", 24);
-		SetEntProp(ent, Prop_Send, "m_CollisionGroup", 1);
+		SetEntProp(ent, Prop_Send, "m_CollisionGroup", 6);
 		SetEntPropEnt(ent, Prop_Send, "m_hOwnerEntity", client);
 		SetEntProp(ent, Prop_Send, "m_iTeamNum", 2);
 		TeleportEntity(ent, pos, ang, vel);
 		DispatchSpawn(ent);
 		TeleportEntity(ent, pos, ang, vel);
-		SetEntProp(ent, Prop_Data, "m_iHealth", 1000);
-		CreateTimer(1.0, t_MakeCoin, any:ent);
+		SetEntProp(ent, Prop_Data, "m_iHealth", 100000);
+		CreateTimer(3.0, t_MakeCoin, any:ent);
 	}
 }

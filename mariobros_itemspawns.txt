@@ -1,0 +1,55 @@
+// To find out your location, use "cl_showpos 1".
+// ===============================================
+// Each section under "ItemSpawns" is the name of a map, excluding the extension.
+// For each map, you can have any number of spawn points for both Power-Ups and Coins.
+// The names for both types of spawns don't matter, but please keep them neat so that others can easily tweak if necessary.
+// ===============================================
+// Coin Spawns:
+//  - "type" must be set to "coin".
+//  - "x", "y", and "z" must be present. They are the world coordinates for the spawn point.
+//
+// Item Spawns:
+//  - "type" must be set to "item".
+//  - "id" is the Power-Up ID that will spawn here. Set to 0 and use "rarity" of 0, 1, or 2 to enable random power-up choices.
+//    ! "rarity" is only used if you set the Power-Up ID to anything out of the normal range of 1 to 15. 0 is your safest bet for this.
+//  - "x", "y", and "z" are again necessary and, again, are world coordinates.
+
+"ItemSpawns"
+{
+	// Example Spawns
+	"mb_koth_overworld_a1"
+	{
+		"coin1"
+		{
+			"type"	"coin"
+			"x"	"300.0"
+			"y"	"0.0"
+			"z"	"50.0"
+		}
+		"coin2"
+		{
+			"type"	"coin"
+			"x"	"-300.0"
+			"y"	"0.0"
+			"z"	"50.0"
+		}
+		"item1"
+		{
+			"type"		"item"
+			"id"		"0"
+			"rarity"	"2"
+			"x"	"0.0"
+			"y"	"300.0"
+			"z"	"20.0"
+		}
+		"item2"
+		{
+			"type"		"item"
+			"id"		"0"
+			"rarity"	"2"
+			"x"	"0.0"
+			"y"	"-300.0"
+			"z"	"20.0"
+		}
+	}
+}
