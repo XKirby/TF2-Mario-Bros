@@ -14,7 +14,7 @@
 #include <steamtools>
 
 // Defines
-#define MB_Version "1.2.0"
+#define MB_Version "1.3.0"
 #define SOUND_STOMP "mariobros/goombastomp.mp3"
 #define SOUND_POWBOLT "mariobros/pow-lightning.mp3"
 #define SOUND_MUSHROOM "mariobros/mushroom.mp3"
@@ -2682,6 +2682,19 @@ public Action:t_MakeCoin2(Handle:timer, any:entity)
 {
 	if(IsValidEntity(entity))
 	{
+		new index, String:SpawnName[64], Float:SpawnPos[3], Float:CoinPos[3];
+		while((index = FindEntityByClassname(index, "item_ammopack_small")) != -1)
+		{
+			GetEntPropString(index, Prop_Data, "m_iName", SpawnName, sizeof(SpawnName));
+			GetEntPropVector(entity, Prop_Data, "m_vecOrigin", SpawnPos);
+			GetEntPropVector(index, Prop_Data, "m_vecOrigin", CoinPos);
+			if(StrContains(SpawnName, "mb_coin", false) > -1 && GetConVarInt(mb_GameMode) == 2 &&
+				(SpawnPos[0] == CoinPos[0] && SpawnPos[1] == CoinPos[1] && SpawnPos[2] == CoinPos[2])
+			)
+			{
+				return Plugin_Handled;
+			}
+		}
 		new e, Float:pos[3], String:value[16], String:path[128];
 		e = CreateEntityByName("item_ammopack_small");
 		if(e != -1)
@@ -2697,6 +2710,7 @@ public Action:t_MakeCoin2(Handle:timer, any:entity)
 			SetEntPropVector(e, Prop_Data, "m_vecOrigin", pos);
 		}
 	}
+	return Plugin_Handled;
 }
 
 // Load Coin Rush Coin Spawn Points
