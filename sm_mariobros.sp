@@ -545,23 +545,51 @@ public Action:Command_SpawnPowerUps(client, args)
 // Adds a Coin Spawn Point
 public AddCoinSpawn(Float:pos[3])
 {
+	new index, String:SpawnName[64], Float:SpawnPos[3], bool:found = false;
+	while((index = FindEntityByClassname(index, "info_target")) != -1)
+	{
+		GetEntPropString(index, Prop_Data, "m_iName", SpawnName, sizeof(SpawnName));
+		GetEntPropVector(index, Prop_Data, "m_vecOrigin", SpawnPos);
+		if(StrEqual(SpawnName, "mb_coinspawn") && SpawnPos[0] == pos[0] && SpawnPos[1] == pos[1] && SpawnPos[2] == pos[2])
+		{
+			found = true;
+			break;
+		}
+	}
+	
 	new en;
 	en = CreateEntityByName("info_target");
-	if(en != -1)
+	if(en != -1 && !found)
 	{
 		SetEntPropVector(en, Prop_Data, "m_vecOrigin", pos);
 		DispatchKeyValue(en, "targetname", "mb_coinspawn");
 		TeleportEntity(en, pos, NULL_VECTOR, NULL_VECTOR);
 		DispatchSpawn(en);
 	}
+	else
+	{
+		AcceptEntityInput(en, "Kill");
+	}
 }
 
 // Adds a Power-Up Spawn Point
 public AddItemSpawn(Float:pos[3], ID, RarityLevel)
 {
+	new index, String:SpawnName[64], Float:SpawnPos[3], bool:found = false;
+	while((index = FindEntityByClassname(index, "info_target")) != -1)
+	{
+		GetEntPropString(index, Prop_Data, "m_iName", SpawnName, sizeof(SpawnName));
+		GetEntPropVector(index, Prop_Data, "m_vecOrigin", SpawnPos);
+		if(StrContains(SpawnName, "mb_itemspawn") && SpawnPos[0] == pos[0] && SpawnPos[1] == pos[1] && SpawnPos[2] == pos[2])
+		{
+			found = true;
+			break;
+		}
+	}
+
 	new en;
 	en = CreateEntityByName("info_target");
-	if(en != -1)
+	if(en != -1 && !found)
 	{
 		SetEntPropVector(en, Prop_Data, "m_vecOrigin", pos);
 		new String:ItemName[64];
@@ -569,6 +597,10 @@ public AddItemSpawn(Float:pos[3], ID, RarityLevel)
 		DispatchKeyValue(en, "targetname", ItemName);
 		TeleportEntity(en, pos, NULL_VECTOR, NULL_VECTOR);
 		DispatchSpawn(en);
+	}
+	else
+	{
+		AcceptEntityInput(en, "Kill");
 	}
 }
 
@@ -1494,7 +1526,7 @@ public Action:OnStartTouch(entity, other)
 {
 	if(other == entity){return;}
 	
-	if(other > 0 && other <= MaxClients+1)
+	if(other > 0 && other <= MaxClients+1 && entity > 0 && entity <= MaxClients+1)
 	{
 		if(IsPlayerAlive(entity))
 		{
@@ -2727,7 +2759,7 @@ public LoadItemSpawnPoints()
 	BuildPath(Path_SM, path, sizeof(path), "configs/mariobros_itemspawns.txt");
 	if(FileToKeyValues(kv, path))
 	{
-		new String:MapName[256], String:CurrentMap[256], Float:NewPos[3], String:Type[16];
+		new String:MapName[256], String:CurrentMap[256], Float:NewPos[3];
 		KvGotoFirstSubKey(kv);
 		do
 		{
@@ -2736,7 +2768,7 @@ public LoadItemSpawnPoints()
 			
 			if(StrEqual(CurrentMap, MapName))
 			{
-				new String:item_name[64];
+				new String:item_name[64], String:Type[16];
 				KvGotoFirstSubKey(kv);
 				do
 				{
@@ -2756,8 +2788,11 @@ public LoadItemSpawnPoints()
 						Size = KvGetNum(kv, "rarity", 0);
 						AddItemSpawn(NewPos, ID, Size);
 					}
+					
 				}
 				while (KvGotoNextKey(kv));
+				
+				KvGoBack(kv);
 			}
 			
 			KvGoBack(kv);
