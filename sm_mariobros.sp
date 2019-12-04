@@ -6,12 +6,9 @@
 #include <morecolors>
 #include <tf2>
 #include <tf2items>
-#include <tf2items_giveweapon>
+//#include <tf2items_giveweapon>
 #include <tf2attributes>
 #include <sdkhooks>
-
-#undef REQUIRE_EXTENSIONS
-#include <steamtools>
 
 // Defines
 #define MB_Version "1.3.0"
@@ -134,6 +131,7 @@ public OnPluginStart()
 	SetConVarString(mb_Version, MB_Version);
 	
 	// Set Game Description
+	/*
 	if(LibraryExists("SteamTools"))
 	{
 		new String:GameDesc[255];
@@ -141,6 +139,7 @@ public OnPluginStart()
 		Steam_SetGameDescription(GameDesc);
 		PrintToServer("[MB] SteamTools detected, changing game description.");
 	}
+	*/
 	
 	// Console Variables
 	mb_JumpHeight = CreateConVar("sm_mb_jumpheight", "450.0", "Sets the jump height for every player.");
@@ -199,15 +198,15 @@ public OnPluginStart()
 	
 	// Custom Weapons
 	// >> Fire Flower
-	TF2Items_CreateWeapon(50000, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350 ; 49 ; -1.0", 50, "", true);
+	//TF2Items_CreateWeapon(50000, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350 ; 49 ; -1.0", 50, "", true);
 	// >> Weak Shovel
-	TF2Items_CreateWeapon(50001, "tf_weapon_shovel", 6, 2, 6, 1, "1 ; 0.2 ; 5 ; 1.25 ; 49 ; -1.0", 0, "", true);
+	//TF2Items_CreateWeapon(50001, "tf_weapon_shovel", 6, 2, 6, 1, "1 ; 0.2 ; 5 ; 1.25 ; 49 ; -1.0", 0, "", true);
 	// >> Hammer
-	TF2Items_CreateWeapon(50002, "tf_weapon_shovel", 153, 2, 6, 100, "2 ; 100 ; 6 ; 0.5 ; 49 ; -1.0", 0, "", true);
+	//TF2Items_CreateWeapon(50002, "tf_weapon_shovel", 153, 2, 6, 100, "2 ; 100 ; 6 ; 0.5 ; 49 ; -1.0", 0, "", true);
 	// >> Ice Flower
-	TF2Items_CreateWeapon(50003, "tf_weapon_rocketlauncher", 658, 0, 6, 50, "1 ; 0.25 ; 6 ; 0.8 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 49 ; -1.0", 50, "", true);
+	//TF2Items_CreateWeapon(50003, "tf_weapon_rocketlauncher", 658, 0, 6, 50, "1 ; 0.25 ; 6 ; 0.8 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 49 ; -1.0", 50, "", true);
 	// >> Bowser's Fire Flower
-	TF2Items_CreateWeapon(50004, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350 ; 134 ; 2 ; 49 ; -1.0", 50, "", true);
+	//TF2Items_CreateWeapon(50004, "tf_weapon_rocketlauncher_directhit", 127, 0, 6, 50, "1 ; 0.5 ; 103 ; 2 ; 303 ; -1 ; 280 ; 6 ; 74 ; 0.0 ; 215 ; 300 ; 216 ; 350 ; 134 ; 2 ; 49 ; -1.0", 50, "", true);
 	
 	LoadTranslations("sm_mariobros.phrases.txt");
 	
@@ -274,6 +273,7 @@ public OnPluginEnd()
 	}
 	
 	// Set Game Description
+	/*
 	if(LibraryExists("SteamTools"))
 	{
 		new String:GameDesc[255];
@@ -281,6 +281,7 @@ public OnPluginEnd()
 		Steam_SetGameDescription(GameDesc);
 		PrintToServer("[MB] SteamTools detected, changing game description back.");
 	}
+	*/
 }
 
 public OnMapStart()
@@ -805,7 +806,8 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 				case 1:
 				{
 					EmitSoundToAll(SOUND_MUSHROOM, client);
-					TF2Items_GiveWeapon(client, 50000);
+					GiveFireFlower(client);
+					//TF2Items_GiveWeapon(client, 50000);
 					TF2_RemoveWeaponSlot(client, 2);
 					CreateTimer(GetConVarFloat(mb_PowerTime), t_EndPowerUp, any:client);
 					Format(Hint, sizeof(Hint), "%t", "mbHint_FireFlower", client);
@@ -949,7 +951,9 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 				case 9:
 				{
 					EmitSoundToAll(SOUND_HAMMER, client);
-					TF2Items_GiveWeapon(client, 50002);
+					TF2_RemoveWeaponSlot(client, 2);
+					GiveHammer(client);
+					//TF2Items_GiveWeapon(client, 50002);
 					CreateTimer(GetConVarFloat(mb_PowerTime), t_EndPowerUp, any:client);
 					Format(Hint, sizeof(Hint), "%t", "mbHint_Hammer", client);
 				}
@@ -993,7 +997,8 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 				case 12:
 				{
 					EmitSoundToAll(SOUND_MUSHROOM, client);
-					TF2Items_GiveWeapon(client, 50003);
+					GiveIceFlower(client);
+					//TF2Items_GiveWeapon(client, 50003);
 					TF2_RemoveWeaponSlot(client, 2);
 					CreateTimer(GetConVarFloat(mb_PowerTime), t_EndPowerUp, any:client);
 					Format(Hint, sizeof(Hint), "%t", "mbHint_IceFlower", client);
@@ -1024,7 +1029,8 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 				case 15:
 				{
 					EmitSoundToAll(SOUND_BOWSER, client);
-					TF2Items_GiveWeapon(client, 50004);
+					GiveBowserFire(client);
+					//TF2Items_GiveWeapon(client, 50004);
 					TF2_RemoveWeaponSlot(client, 2);
 					SetEntityHealth(client, GetConVarInt(mb_BowserHP));
 					SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", GetConVarFloat(mb_MoveSpeed)*0.66);
@@ -1119,7 +1125,7 @@ public Action:OnTakeDamage(victim, &attacker, &inflictor, &Float:damage, &damage
 	{
 		damage *= 0.0;
 		Lives[victim] -= 1;
-		SetEntityHealth(victim, 200);
+		SetEntityHealth(victim, GetConVarInt(mb_MaximumHP));
 		Invincible[victim] = true;
 		CreateTimer(3.0, t_EndInv, any:victim);
 		CPrintToChat(victim, "{crimson}[MB]{default}You have {orange}%i {default}Lives left!", Lives[victim]);
@@ -1186,7 +1192,7 @@ public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 			CreateTimer(0.1, t_ForceDefaultSpeed, any:client);
 			
 			// Set Player Class as Soldier.
-			TF2_SetPlayerClass(client, TFClass_Soldier, false, true);
+			// TF2_SetPlayerClass(client, TFClass_Soldier, false, true);
 			
 			// Remove All Weapons
 			TF2_RemoveAllWeapons(client);
@@ -1209,12 +1215,13 @@ public Event_PlayerSpawn(Handle:event, const String:name[], bool:dontBroadcast)
 			}
 			
 			// Gives you a really weak Shovel.
-			TF2Items_GiveWeapon(client, 50001);
+			GiveWeakMelee(client);
+			//TF2Items_GiveWeapon(client, 50001);
 			
 			// Fixes HP
 			//SetEntProp(client, Prop_Data, "m_iMaxHealth", GetConVarInt(mb_MaximumHP));
-			//SetEntProp(client, Prop_Data, "m_iHealth", GetConVarInt(mb_MaximumHP));
-			TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - 200.0);
+			//SetEntProp(client, Prop_Send, "m_iHealth", GetConVarInt(mb_MaximumHP));
+			TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - GetClassHP(client));
 			CreateTimer(0.1, t_FixMaxHP, any:client);
 			
 			// Recolor the player correctly
@@ -1437,7 +1444,7 @@ public Event_PlayerLocker(Handle:event, const String:name[], bool:dontBroadcast)
 	if(IsValidEntity(client))
 	{
 		// Set Player Class as Soldier.
-		TF2_SetPlayerClass(client, TFClass_Soldier, false, true);
+		// TF2_SetPlayerClass(client, TFClass_Soldier, false, true);
 		
 		// Remove All Weapons
 		TF2_RemoveAllWeapons(client);
@@ -1460,12 +1467,13 @@ public Event_PlayerLocker(Handle:event, const String:name[], bool:dontBroadcast)
 		}
 		
 		// Gives you a really weak Shovel.
-		TF2Items_GiveWeapon(client, 50001);
+		GiveWeakMelee(client);
+		//TF2Items_GiveWeapon(client, 50001);
 		
 		// Fixes HP
 		//SetEntProp(client, Prop_Data, "m_iMaxHealth", GetConVarInt(mb_MaximumHP));
-		//SetEntProp(client, Prop_Data, "m_iHealth", GetConVarInt(mb_MaximumHP));
-		TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - 200.0);
+		//SetEntProp(client, Prop_Send, "m_iHealth", GetConVarInt(mb_MaximumHP));
+		TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - GetClassHP(client));
 		CreateTimer(0.1, t_FixMaxHP, any:client);
 		
 		// Recolor the player correctly
@@ -1690,7 +1698,7 @@ public OnGameFrame()
 						{
 							Lives[SteppedOn[client]] -= 1;
 							damage *= 0.0;
-							SetEntityHealth(SteppedOn[client], 200);
+							SetEntityHealth(SteppedOn[client], GetConVarInt(mb_MaximumHP));
 							CPrintToChat(SteppedOn[client], "{crimson}[MB]{default}You have {orange}%i {default}Lives left!", Lives[SteppedOn[client]]);
 							Invincible[SteppedOn[client]] = true;
 							CreateTimer(3.0, t_EndInv, any:SteppedOn[client]);
@@ -1780,24 +1788,28 @@ public Action:t_EndPowerUp(Handle:timer, any:client)
 			case 1:
 			{
 				TF2_RemoveWeaponSlot(client, 0);
-				TF2Items_GiveWeapon(client, 50001);
+				GiveWeakMelee(client);
+				//TF2Items_GiveWeapon(client, 50001);
 			}
 			case 3, 6, 8: {SetEntPropFloat(client, Prop_Send, "m_flMaxspeed", GetConVarFloat(mb_MoveSpeed));}
 			case 5: {Floating[client] = false;}
 			case 9:
 			{
-				TF2_RemoveWeaponSlot(client, 0);
-				TF2Items_GiveWeapon(client, 50001);
+				TF2_RemoveWeaponSlot(client, 2);
+				GiveWeakMelee(client);
+				//TF2Items_GiveWeapon(client, 50001);
 			}
 			case 12:
 			{
 				TF2_RemoveWeaponSlot(client, 0);
-				TF2Items_GiveWeapon(client, 50001);
+				GiveWeakMelee(client);
+				//TF2Items_GiveWeapon(client, 50001);
 			}
 			case 15:
 			{
 				TF2_RemoveWeaponSlot(client, 0);
-				TF2Items_GiveWeapon(client, 50001);
+				GiveWeakMelee(client);
+				//TF2Items_GiveWeapon(client, 50001);
 			}
 		}
 		i_UsingPower[client] = 0;
@@ -1844,8 +1856,8 @@ public Action:t_FixMaxHP(Handle:timer, any:client)
 	if(IsClientInGame(client) && IsPlayerAlive(client))
 	{
 		//SetEntProp(client, Prop_Data, "m_iMaxHealth", GetConVarInt(mb_MaximumHP));
-		//SetEntProp(client, Prop_Data, "m_iHealth", GetConVarInt(mb_MaximumHP));
-		TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - 200.0);
+		//SetEntProp(client, Prop_Send, "m_iHealth", GetConVarInt(mb_MaximumHP));
+		TF2Attrib_SetByName(client, "max health additive bonus", GetConVarFloat(mb_MaximumHP) - GetClassHP(client));
 	}
 }
 
@@ -2630,6 +2642,133 @@ public OnGameModeChange(Handle:cvar, const String:oldVal[], const String:newVal[
 			}
 		}
 	}
+}
+
+public GiveWeakMelee(client)
+{
+	new Handle:hItem = TF2Items_CreateItem(FORCE_GENERATION | OVERRIDE_ALL);
+	new ent = -1;
+	switch(TF2_GetPlayerClass(client))
+	{
+		case (TFClassType:TFClass_Heavy): TF2Items_SetClassname(hItem, "tf_weapon_fists");
+		default: TF2Items_SetClassname(hItem, "tf_weapon_shovel");
+	}
+	TF2Items_SetItemIndex(hItem, 5);
+	TF2Items_SetQuality(hItem, 6);
+	TF2Items_SetLevel(hItem, 1);
+	TF2Items_SetNumAttributes(hItem, 3);
+	TF2Items_SetAttribute(hItem, 0, 1, 0.2);
+	TF2Items_SetAttribute(hItem, 1, 5, 1.25);
+	TF2Items_SetAttribute(hItem, 2, 49, 1.0);
+	ent = TF2Items_GiveNamedItem(client, hItem);
+	CloseHandle(hItem);
+	EquipPlayerWeapon(client, ent);
+}
+
+public GiveHammer(client)
+{
+	new Handle:hItem = TF2Items_CreateItem(FORCE_GENERATION | OVERRIDE_ALL);
+	new ent = -1;
+	switch(TF2_GetPlayerClass(client))
+	{
+		case (TFClassType:TFClass_Heavy): TF2Items_SetClassname(hItem, "tf_weapon_fists");
+		default: TF2Items_SetClassname(hItem, "tf_weapon_shovel");
+	}
+	TF2Items_SetItemIndex(hItem, 153);
+	TF2Items_SetQuality(hItem, 6);
+	TF2Items_SetLevel(hItem, 1);
+	TF2Items_SetNumAttributes(hItem, 3);
+	TF2Items_SetAttribute(hItem, 0, 2, 100.0);
+	TF2Items_SetAttribute(hItem, 1, 6, 0.5);
+	TF2Items_SetAttribute(hItem, 2, 49, 1.0);
+	ent = TF2Items_GiveNamedItem(client, hItem);
+	CloseHandle(hItem);
+	EquipPlayerWeapon(client, ent);
+}
+
+public GiveFireFlower(client)
+{
+	new Handle:hItem = TF2Items_CreateItem(FORCE_GENERATION | OVERRIDE_ALL);
+	new ent = -1;
+	TF2Items_SetClassname(hItem, "tf_weapon_rocketlauncher_directhit");
+	TF2Items_SetItemIndex(hItem, 127);
+	TF2Items_SetQuality(hItem, 6);
+	TF2Items_SetLevel(hItem, 1);
+	TF2Items_SetNumAttributes(hItem, 9);
+	TF2Items_SetAttribute(hItem, 0, 1, 0.5);
+	TF2Items_SetAttribute(hItem, 1, 103, 1.5);
+	TF2Items_SetAttribute(hItem, 2, 4, 25.0);
+	TF2Items_SetAttribute(hItem, 3, 77, 0.0);
+	TF2Items_SetAttribute(hItem, 4, 280, 6.0);
+	TF2Items_SetAttribute(hItem, 5, 74, 0.0);
+	TF2Items_SetAttribute(hItem, 6, 215, 150.0);
+	TF2Items_SetAttribute(hItem, 7, 216, 150.0);
+	TF2Items_SetAttribute(hItem, 8, 49, 1.0);
+	ent = TF2Items_GiveNamedItem(client, hItem);
+	CloseHandle(hItem);
+	EquipPlayerWeapon(client, ent);
+}
+
+public GiveBowserFire(client)
+{
+	new Handle:hItem = TF2Items_CreateItem(FORCE_GENERATION | OVERRIDE_ALL);
+	new ent = -1;
+	TF2Items_SetClassname(hItem, "tf_weapon_rocketlauncher_directhit");
+	TF2Items_SetItemIndex(hItem, 127);
+	TF2Items_SetQuality(hItem, 6);
+	TF2Items_SetLevel(hItem, 1);
+	TF2Items_SetNumAttributes(hItem, 9);
+	TF2Items_SetAttribute(hItem, 0, 134, 2.0);
+	TF2Items_SetAttribute(hItem, 1, 103, 1.5);
+	TF2Items_SetAttribute(hItem, 2, 4, 25.0);
+	TF2Items_SetAttribute(hItem, 3, 77, 0.5);
+	TF2Items_SetAttribute(hItem, 4, 280, 6.0);
+	TF2Items_SetAttribute(hItem, 5, 74, 0.0);
+	TF2Items_SetAttribute(hItem, 6, 215, 300.0);
+	TF2Items_SetAttribute(hItem, 7, 216, 350.0);
+	TF2Items_SetAttribute(hItem, 8, 49, 1.0);
+	ent = TF2Items_GiveNamedItem(client, hItem);
+	CloseHandle(hItem);
+	EquipPlayerWeapon(client, ent);
+}
+
+public GiveIceFlower(client)
+{
+	new Handle:hItem = TF2Items_CreateItem(FORCE_GENERATION | OVERRIDE_ALL);
+	new ent = -1;
+	TF2Items_SetClassname(hItem, "tf_weapon_rocketlauncher");
+	TF2Items_SetItemIndex(hItem, 658);
+	TF2Items_SetQuality(hItem, 6);
+	TF2Items_SetLevel(hItem, 1);
+	TF2Items_SetNumAttributes(hItem, 8);
+	TF2Items_SetAttribute(hItem, 0, 1, 0.25);
+	TF2Items_SetAttribute(hItem, 1, 103, 1.5);
+	TF2Items_SetAttribute(hItem, 2, 4, 25.0);
+	TF2Items_SetAttribute(hItem, 3, 77, 0.0);
+	TF2Items_SetAttribute(hItem, 4, 280, 6.0);
+	TF2Items_SetAttribute(hItem, 5, 74, 0.0);
+	TF2Items_SetAttribute(hItem, 6, 6, 0.8);
+	TF2Items_SetAttribute(hItem, 7, 49, 1.0);
+	ent = TF2Items_GiveNamedItem(client, hItem);
+	CloseHandle(hItem);
+	EquipPlayerWeapon(client, ent);
+}
+
+public Float:GetClassHP(client)
+{
+	switch(TF2_GetPlayerClass(client))
+	{
+		case (TFClassType:TFClass_Scout): return 125.0;
+		case (TFClassType:TFClass_Soldier): return 200.0;
+		case (TFClassType:TFClass_Pyro): return 175.0;
+		case (TFClassType:TFClass_DemoMan): return 175.0;
+		case (TFClassType:TFClass_Heavy): return 300.0;
+		case (TFClassType:TFClass_Engineer): return 125.0;
+		case (TFClassType:TFClass_Sniper): return 125.0;
+		case (TFClassType:TFClass_Medic): return 150.0;
+		case (TFClassType:TFClass_Spy): return 125.0;
+	}
+	return 0.0;
 }
 
 // Disable/Enable Points
