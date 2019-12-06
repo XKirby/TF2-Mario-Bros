@@ -11,7 +11,7 @@
 #include <sdkhooks>
 
 // Defines
-#define MB_Version "1.3.0"
+#define MB_Version "1.4.0"
 #define SOUND_STOMP "mariobros/goombastomp.mp3"
 #define SOUND_POWBOLT "mariobros/pow-lightning.mp3"
 #define SOUND_MUSHROOM "mariobros/mushroom.mp3"
@@ -839,7 +839,7 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 								{
 									damage *= 0.0;
 									Lives[i] -= 1;
-									SetEntityHealth(i, 200);
+									SetEntityHealth(i, GetConVarInt(mb_MaximumHP));
 									Invincible[i] = true;
 									CreateTimer(3.0, t_EndInv, any:i);
 									CPrintToChat(i, "{crimson}[MB]{default}You have {orange}%i {default}Lives left!", Lives[i]);
@@ -1809,6 +1809,10 @@ public Action:t_EndPowerUp(Handle:timer, any:client)
 			{
 				TF2_RemoveWeaponSlot(client, 0);
 				GiveWeakMelee(client);
+				if(GetEntProp(client, Prop_Send, "m_iHealth") >= GetConVarInt(mb_MaximumHP))
+				{
+					SetEntityHealth(client, GetConVarInt(mb_MaximumHP));
+				}
 				//TF2Items_GiveWeapon(client, 50001);
 			}
 		}
